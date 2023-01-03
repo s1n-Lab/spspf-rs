@@ -22,8 +22,8 @@ pub enum Colors {
 impl Colors {
     pub fn as_color(&self) -> Color {
         match self {
-            Colors::BLACK => Color::new(0, 0, 0, 255),            
-            Colors::RED => Color::new(255, 0, 0, 255),            
+            Colors::BLACK => Color::new(0, 0, 0, 255),
+            Colors::RED => Color::new(255, 0, 0, 255),
             Colors::GREEN => Color::new(0, 255, 0, 255),
             Colors::BLUE => Color::new(0, 0, 255, 255),
             Colors::YELLOW => Color::new(255, 255, 0, 255),

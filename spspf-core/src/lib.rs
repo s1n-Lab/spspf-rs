@@ -1,14 +1,14 @@
 //! # SPSPF
-//! 
+//!
 //! `SPSPF` or Simple PSP Framework is a simple, Rust-based, modular framework and high-level abstraction
 //! layer for Sony's Playstation Portable. Although its main use is for game development, SPSPF aims
 //! to allow users to develop all sorts of homebrew to their PSP.
-//! 
+//!
 //! Due to its modularity you can choose to only use some portions of the framework and just disregard
 //! the ones that fit little to no use in your project. The source code is also publicly available so if
-//! you need to extract a function and pop it into your application you can do so with no problems, just 
+//! you need to extract a function and pop it into your application you can do so with no problems, just
 //! making sure to comply with the License of this project and its references.
-//! 
+//!
 //! This is the `core` crate which contains the basic functions/features all other spspsf creates depends on.
 
 #![no_std]
@@ -20,7 +20,7 @@ pub mod input;
 pub use crate::input::Buttons;
 pub use crate::input::InputManager;
 
-// The `io` module is a wrapper for the PSP's File Input and Output 
+// The `io` module is a wrapper for the PSP's File Input and Output
 //pub mod io;
 //pub mod threads;
 /// The `utils` module is a set of different functions that serve multiple purposes in the SPSPF project.

@@ -4,6 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-psp = { path = "/home/tuxdev/dev/third-party/rust-psp/psp" }
+psp = { path = "../../rust-psp/psp" }
 spspf-core = { path = "../../spspf-core" }
 spspf-graphics = { path = "../../spspf-graphics" }

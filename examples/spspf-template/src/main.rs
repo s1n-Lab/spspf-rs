@@ -1,13 +1,9 @@
 #![no_std]
 #![no_main]
 
-extern crate alloc;
-
-use alloc::format;
 use psp::Align16;
-use spspf_core::{input::{InputManager, Buttons}, Vec2, Vec3, utils};
+use spspf_core::{input::{InputManager, Buttons}, Vec2, Vec3};
 use spspf_graphics::{canvas::Canvas, shapes::Shape, colors::Colors, sprite::Sprite, Drawable};
-use spspf_audio::audio::{AudioManager, Sound};
 
 psp::module!("SPSPF - Demo", 1, 1);
 

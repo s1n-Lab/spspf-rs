@@ -1,0 +1,3 @@
+[submodule "rust-psp"]
+	path = rust-psp
+	url = https://github.com/overdrivenpotato/rust-psp
