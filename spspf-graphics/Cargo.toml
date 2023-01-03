@@ -1,0 +1,13 @@
+[package]
+name = "spspf-graphics"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+psp = { path = "/home/tuxdev/dev/third-party/rust-psp/psp" }
+spspf-core = { path = "../spspf-core" }
+
+[profile.release]
+debug = true
