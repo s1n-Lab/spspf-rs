@@ -1,26 +1,32 @@
 #![no_std]
 #![no_main]
 
-use psp::Align16;
-use spspf_core::{input::{InputManager, Buttons}, Vec2, Vec3};
-use spspf_graphics::{canvas::Canvas, shapes::Shape, colors::Colors, sprite::Sprite, Drawable};
+use psp::{Align16, math};
+use spspf_core::{
+    input::{Buttons, InputManager},
+    Vec2, Vec3,
+};
+use spspf_graphics::{
+    Canvas, Colors, Primitive, Sprite, Drawable,
+};
 
 psp::module!("SPSPF - Demo", 1, 1);
 
-pub static FERRIS: Align16<[u8; 128 * 128 * 4 as usize]> = Align16(*include_bytes!("../ferris.bin"));
+pub static FERRIS: Align16<[u8; 128 * 128 * 4 as usize]> =
+    Align16(*include_bytes!("../ferris.bin"));
 
 fn psp_main() {
     let mut running = true;
     let mut canvas = Canvas::new();
     let mut input_manager = InputManager::new();
-    
-    let mut rect = Shape::new_rect(
+
+    let mut rect = Primitive::Rect::new(
         Vec3::new(240.0, 136.0, -1.0),
         Vec2::new(240.0, 136.0),
         Colors::BLUE.as_color(),
     );
 
-    let mut triangle = Shape::new_triangle(
+    let mut triangle = Primitive::Triangle::new(
         [
             Vec3::new(0.0, 272.0, -1.0),
             Vec3::new(0.0, 0.0, -1.0),
@@ -29,7 +35,11 @@ fn psp_main() {
         Colors::RED.as_color(),
     );
 
-    let mut circle = Shape::new_circle(Vec3::new(240.0, 136.0, -1.0), 50.0, Colors::WHITE.as_color());
+    let mut circle = Primitive::Ellipse::new(
+        Vec3::new(240.0, 136.0, -1.0),
+        Vec2::new(75.0, 50.0),
+        Colors::WHITE.as_color(),
+    );
 
     let mut sprite = Sprite::new(
         Vec3::new(217.5, 113.5, -1.0),
@@ -42,7 +52,7 @@ fn psp_main() {
     let mut draw_rect = true;
     let mut draw_triangle = true;
     let mut draw_circle = true;
-    
+
     while running {
         canvas.start_frame();
         input_manager.update();
@@ -60,7 +70,7 @@ fn psp_main() {
         }
 
         sprite.draw();
-        
+
         if input_manager.is_key_down_changed(Buttons::Square) {
             draw_rect = !draw_rect;
         }
@@ -74,7 +84,10 @@ fn psp_main() {
         // Move sprite
         if input_manager.is_key_down(Buttons::Left) {
             let mut pos = sprite.get_pos();
-            if pos.x > 0.0 { pos.x -= 1.0; sprite.set_pos(pos); }
+            if pos.x > 0.0 {
+                pos.x -= 1.0;
+                sprite.set_pos(pos);
+            }
         }
         if input_manager.is_key_down(Buttons::Right) {
             let mut pos = sprite.get_pos();
@@ -83,7 +96,10 @@ fn psp_main() {
         }
         if input_manager.is_key_down(Buttons::Up) {
             let mut pos = sprite.get_pos();
-            if pos.y > 0.0 { pos.y -= 1.0; sprite.set_pos(pos); }
+            if pos.y > 0.0 {
+                pos.y -= 1.0;
+                sprite.set_pos(pos);
+            }
         }
         if input_manager.is_key_down(Buttons::Down) {
             let mut pos = sprite.get_pos();
@@ -101,8 +117,8 @@ fn psp_main() {
             if size.x > 1.0 {
                 size.x -= 1.0;
                 size.y -= 1.0;
+                sprite.set_size(size)
             }            
-            sprite.set_size(size)
         }
         if input_manager.is_key_down(Buttons::Start) {
             let mut size = sprite.get_size();
@@ -111,7 +127,20 @@ fn psp_main() {
             sprite.set_size(size)
         }
 
-        running = input_manager.is_key_up(Buttons::RTrigger);
+        /*running = input_manager.is_key_up(Buttons::RTrigger);*/
+        if input_manager.is_key_down(Buttons::LTrigger) {
+            let mut rot = rect.get_rot();
+            if rot <= 1.0 { rot = 360.0; }
+            rot -= 1.0;
+            rect.set_rot(rot);
+        }
+
+        if input_manager.is_key_down(Buttons::RTrigger) {
+            let mut rot = rect.get_rot();
+            if rot >= 359.0 { rot = 0.0; }
+            rot += 1.0;
+            rect.set_rot(rot);
+        }
 
         canvas.end_frame();
     }

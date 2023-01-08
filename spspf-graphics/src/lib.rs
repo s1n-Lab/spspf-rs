@@ -24,9 +24,9 @@ pub use crate::canvas::Canvas;
 pub mod colors;
 pub use crate::colors::{Color, Colors};
 #[allow(dead_code)]
-/// This module defines the basic shapes (Rect, Triangle, Circle) to allow it to be drawn easily.
-pub mod shapes;
-pub use crate::shapes::Shape;
+/// This module defines basic primitives (Rect, Triangle, Ellipse) to allow it to be drawn easily.
+pub mod primitives;
+pub use crate::primitives::Primitive;
 #[allow(dead_code)]
 /// This module defines a 2D sprite that, based on a 16-bit aligned image with matching W and H.
 pub mod sprite;
