@@ -35,7 +35,7 @@ impl Colors {
 }
 
 /// Defines what a color is in RGBA8.
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub struct Color {
     r: u8,
     g: u8,

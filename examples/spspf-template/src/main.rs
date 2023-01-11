@@ -128,20 +128,18 @@ fn psp_main() {
             sprite.set_size(size)
         }
 
-        /*running = input_manager.is_key_up(Buttons::RTrigger);*/
-
         if input_manager.is_key_down(Buttons::LTrigger) {
-            let mut rot = rect.get_rot();
+            let mut rot = sprite.get_rot();
             if rot <= 1.0 { rot = 360.0; }
-            rot -= 1.0;
-            rect.set_rot(rot);
+            rot -= 2.0;
+            sprite.set_rot(rot);
         }
 
         if input_manager.is_key_down(Buttons::RTrigger) {
-            let mut rot = rect.get_rot();
+            let mut rot = sprite.get_rot();
             if rot >= 359.0 { rot = 0.0; }
-            rot += 1.0;
-            rect.set_rot(rot);
+            rot += 2.0;
+            sprite.set_rot(rot);
         }
 
         canvas.end_frame();

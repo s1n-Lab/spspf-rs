@@ -6,10 +6,10 @@ use psp::{
         sceGuClearDepth, sceGuDebugFlush, sceGuDebugPrint, sceGuDepthBuffer, sceGuDepthRange,
         sceGuDispBuffer, sceGuDisplay, sceGuDrawBuffer, sceGuEnable, sceGuFinish, sceGuInit,
         sceGuOffset, sceGuScissor, sceGuShadeModel, sceGuStart, sceGuSwapBuffers, sceGuSync,
-        sceGuTerm, sceGuTexFunc, sceGuTexMode, sceGuViewport, sceGumLoadIdentity, sceGumMatrixMode,
-        sceGumOrtho, sceKernelExitGame, AlphaFunc, BlendFactor, BlendOp, ClearBuffer,
-        DisplayPixelFormat, GuContextType, GuState, GuSyncBehavior, GuSyncMode, MatrixMode,
-        ShadingModel, TextureColorComponent, TextureEffect, TexturePixelFormat,
+        sceGuTerm, sceGuViewport, sceGumLoadIdentity, sceGumMatrixMode, sceGumOrtho,
+        sceKernelDcacheWritebackInvalidateAll, sceKernelExitGame, AlphaFunc, BlendFactor, BlendOp,
+        ClearBuffer, DisplayPixelFormat, GuContextType, GuState, GuSyncBehavior, GuSyncMode,
+        MatrixMode, ShadingModel, TexturePixelFormat,
     },
     vram_alloc::get_vram_allocator,
     BUF_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH,
@@ -60,8 +60,6 @@ impl Canvas {
             sceGuEnable(GuState::ScissorTest);
 
             sceGuEnable(GuState::Texture2D);
-            sceGuTexMode(TexturePixelFormat::Psm8888, 0, 0, 0);
-            sceGuTexFunc(TextureEffect::Modulate, TextureColorComponent::Rgb);
             sceGuEnable(GuState::Blend);
             sceGuBlendFunc(
                 BlendOp::Add,
@@ -107,6 +105,7 @@ impl Canvas {
             sceGuFinish();
             sceGuSync(GuSyncMode::Finish, GuSyncBehavior::Wait);
             sceDisplayWaitVblankStart();
+            sceKernelDcacheWritebackInvalidateAll();
             sceGuSwapBuffers();
         }
     }

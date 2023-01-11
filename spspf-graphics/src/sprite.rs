@@ -1,22 +1,22 @@
-use core::ptr;
-
 use psp::{
     sys::{
-        sceGuEnable, sceGuTexFilter, sceGuTexImage, sceGuTexOffset, sceGuTexScale, sceGumDrawArray,
-        sceGumLoadIdentity, sceGumMatrixMode, sceGumTranslate,
-        sceKernelDcacheWritebackInvalidateAll, GuPrimitive, GuState, MatrixMode, MipmapLevel,
-        ScePspFVector3, TextureFilter, VertexType,
+        sceGuEnable, sceGuTexFilter, sceGuTexFunc, sceGuTexImage, sceGuTexMode, sceGuTexOffset,
+        sceGuTexScale, sceGuTexWrap, sceGumDrawArray, sceGumLoadIdentity, sceGumMatrixMode,
+        sceGumPopMatrix, sceGumPushMatrix, sceGumRotateZ, sceGumTranslate, GuPrimitive, GuState,
+        GuTexWrapMode, MatrixMode, MipmapLevel, ScePspFVector3, TextureColorComponent,
+        TextureEffect, TextureFilter, TexturePixelFormat, VertexType,
     },
     Align16,
 };
 use spspf_core::{Vec2, Vec3};
 
-use crate::{colors::Color, Drawable, Vertex};
+use crate::{colors::Color, Drawable, Vertex, PI};
 
 pub struct Sprite<const N: usize> {
-    vertices: Align16<[Vertex; 2]>,
+    vertices: Align16<[Vertex; 4]>,
+    indices: Align16<[u16; 6]>,
     position: Vec3<f32>,
-    _rotation: f32,
+    rotation: f32,
     size: Vec2<f32>,
 
     texture: Align16<[u8; N]>,
@@ -32,14 +32,45 @@ impl<const N: usize> Sprite<N> {
         texture: Align16<[u8; N]>,
         color: Color,
     ) -> Self {
-        let vertices: Align16<[Vertex; 2]> = Align16([
+        let texture_size = psp::math::sqrtf(texture.0.len() as f32 / 4.0);
+
+        Self {
+            vertices: Self::generate_vertices(size, color),
+            indices: Align16([0, 1, 2, 2, 1, 3]),
+            position: position,
+            rotation,
+            size: size,
+            texture_size,
+            texture: texture,
+            color: color,
+        }
+    }
+
+    pub(crate) fn generate_vertices(size: Vec2<f32>, color: Color) -> Align16<[Vertex; 4]> {
+        Align16([
             Vertex {
                 u: 0.0,
                 v: 0.0,
                 color: color.as_abgr(),
                 x: 0.0,
                 y: 0.0,
-                z: position.z,
+                z: -1.0,
+            },
+            Vertex {
+                u: size.x,
+                v: 0.0,
+                color: color.as_abgr(),
+                x: size.x,
+                y: 0.0,
+                z: -1.0,
+            },
+            Vertex {
+                u: 0.0,
+                v: size.y,
+                color: color.as_abgr(),
+                x: 0.0,
+                y: size.y,
+                z: -1.0,
             },
             Vertex {
                 u: size.x,
@@ -47,42 +78,30 @@ impl<const N: usize> Sprite<N> {
                 color: color.as_abgr(),
                 x: size.x,
                 y: size.y,
-                z: position.z,
+                z: -1.0,
             },
-        ]);
-
-        Self {
-            vertices: vertices,
-            position: position,
-            _rotation: rotation,
-            size: size,
-            texture_size: (psp::math::sqrtf(texture.0.len() as f32 / 4.0)),
-            texture: texture,
-            color: color,
-        }
+        ])
     }
 }
 
 impl<const N: usize> Drawable for Sprite<N> {
     fn draw(&mut self) {
         unsafe {
-            // Enable Texture2D
             sceGuEnable(GuState::Texture2D);
-
-            // Reposition
             sceGumMatrixMode(MatrixMode::Model);
+
+            sceGumPushMatrix();
+
             sceGumLoadIdentity();
+
             sceGumTranslate(&ScePspFVector3 {
                 x: self.position.x,
                 y: self.position.y,
                 z: self.position.z,
             });
+            sceGumRotateZ(self.rotation);
 
-            sceGuTexFilter(TextureFilter::Linear, TextureFilter::Linear);
-            sceGuTexScale(1.0 / self.size.x, 1.0 / self.size.y);
-            sceGuTexOffset(0.0, 0.0);
-            sceKernelDcacheWritebackInvalidateAll();
-
+            sceGuTexMode(TexturePixelFormat::Psm8888, 0, 0, 0);
             sceGuTexImage(
                 MipmapLevel::None,
                 self.texture_size as i32,
@@ -90,16 +109,25 @@ impl<const N: usize> Drawable for Sprite<N> {
                 self.texture_size as i32,
                 &self.texture as *const Align16<_> as *const _,
             );
+            sceGuTexFunc(TextureEffect::Modulate, TextureColorComponent::Rgba);
+            sceGuTexFilter(TextureFilter::Nearest, TextureFilter::Nearest);
+            sceGuTexScale(1.0 / self.size.x, 1.0 / self.size.y);
+            sceGuTexOffset(0.0, 0.0);
+            sceGuTexWrap(GuTexWrapMode::Repeat, GuTexWrapMode::Repeat);
+
             sceGumDrawArray(
-                GuPrimitive::Sprites,
+                GuPrimitive::Triangles,
                 VertexType::TEXTURE_32BITF
+                    | VertexType::INDEX_16BIT
                     | VertexType::COLOR_8888
                     | VertexType::VERTEX_32BITF
                     | VertexType::TRANSFORM_3D,
-                2,
-                ptr::null_mut(),
+                6,
+                &self.indices as *const Align16<_> as *const _,
                 &self.vertices as *const Align16<_> as *const _,
-            )
+            );
+
+            sceGumPopMatrix();
         }
     }
 
@@ -109,24 +137,7 @@ impl<const N: usize> Drawable for Sprite<N> {
 
     fn set_size(&mut self, new_size: Vec2<f32>) {
         self.size = new_size;
-        let vertices: Align16<[Vertex; 2]> = Align16([
-            Vertex {
-                u: 0.0,
-                v: 0.0,
-                color: self.color.as_abgr(),
-                x: 0.0,
-                y: 0.0,
-                z: self.position.z,
-            },
-            Vertex {
-                u: new_size.x,
-                v: new_size.y,
-                color: self.color.as_abgr(),
-                x: new_size.x,
-                y: new_size.y,
-                z: self.position.z,
-            },
-        ]);
+        let vertices = Self::generate_vertices(self.size, self.color);
 
         self.vertices = vertices;
     }
@@ -140,11 +151,11 @@ impl<const N: usize> Drawable for Sprite<N> {
     }
 
     fn get_rot(&mut self) -> f32 {
-        todo!("Not implemented!");
+        self.rotation * (180.0 / PI)
     }
 
-    fn set_rot(&mut self, _new_rotation: f32) {
-        todo!("Not implemented!");
+    fn set_rot(&mut self, new_rotation: f32) {
+        self.rotation = new_rotation * (PI / 180.0);
     }
 }
 

@@ -15,6 +15,8 @@
 #![no_std]
 #![no_main]
 
+pub(crate) const PI: f32 = 3.1415926536;
+
 #[allow(dead_code)]
 /// This modules describes and gives access to the PSP screen (width: `480`, height: `272`).
 pub mod canvas;

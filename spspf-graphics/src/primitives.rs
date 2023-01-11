@@ -1,21 +1,20 @@
 #[allow(non_snake_case)]
 pub mod Primitive {
-    use crate::{Color, Drawable, Vertex};
+    use crate::{Color, Drawable, Vertex, PI};
     use core::ptr;
     extern crate alloc;
     use psp::{
         math,
         sys::{
-            sceGumDrawArray, sceGumLoadIdentity, sceGumMatrixMode, sceGumTranslate,
-            sceKernelDcacheWritebackInvalidateAll, GuPrimitive, MatrixMode, ScePspFVector3,
-            VertexType, sceGuDisable, GuState, sceGumRotateZ, sceGumPushMatrix, sceGumPopMatrix,
+            sceGuDisable, sceGumDrawArray, sceGumLoadIdentity, sceGumMatrixMode, sceGumPopMatrix,
+            sceGumPushMatrix, sceGumRotateZ, sceGumTranslate, GuPrimitive, GuState, MatrixMode,
+            ScePspFVector3, VertexType,
         },
         Align16,
     };
     use spspf_core::{Vec2, Vec3};
 
     const STEPS: i32 = 100;
-    const PI: f32 = 3.1415926536;
     const ANGLE: f32 = PI * 2.0 / STEPS as f32;
 
     #[derive(Clone)]
@@ -32,12 +31,9 @@ pub mod Primitive {
 
     impl Rect {
         pub fn new(position: Vec3<f32>, size: Vec2<f32>, color: Color) -> Self {
-            let vertices: Align16<[Vertex; 4]> = Self::generate_vertices(size, color.clone());
-            let indices: Align16<[u16; 6]> = Align16([0, 1, 2, 2, 1, 3]);
-
             Self {
-                vertices,
-                indices,
+                vertices: Self::generate_vertices(size, color.clone()),
+                indices: Align16([0, 1, 2, 2, 1, 3]),
                 position,
                 rotation: 0.0,
                 size,
@@ -89,8 +85,9 @@ pub mod Primitive {
                 sceGuDisable(GuState::Texture2D);
                 sceGumMatrixMode(MatrixMode::Model);
 
-                //sceGumLoadIdentity();
                 sceGumPushMatrix();
+
+                sceGumLoadIdentity();
 
                 sceGumTranslate(&ScePspFVector3 {
                     x: self.position.x,
@@ -99,7 +96,6 @@ pub mod Primitive {
                 });
                 sceGumRotateZ(self.rotation);
 
-                sceKernelDcacheWritebackInvalidateAll();
                 sceGumDrawArray(
                     GuPrimitive::Triangles,
                     VertexType::TEXTURE_32BITF
@@ -192,16 +188,18 @@ pub mod Primitive {
         fn draw(&mut self) {
             unsafe {
                 sceGuDisable(GuState::Texture2D);
-                // Reposition
                 sceGumMatrixMode(MatrixMode::Model);
+
+                sceGumPushMatrix();
+
                 sceGumLoadIdentity();
+
                 sceGumTranslate(&ScePspFVector3 {
                     x: self.position.x,
                     y: self.position.y,
                     z: -1.0,
                 });
 
-                sceKernelDcacheWritebackInvalidateAll();
                 sceGumDrawArray(
                     GuPrimitive::Triangles,
                     VertexType::TEXTURE_32BITF
@@ -212,6 +210,8 @@ pub mod Primitive {
                     ptr::null_mut(),
                     &self.vertices as *const Align16<_> as *const _,
                 );
+
+                sceGumPopMatrix();
             }
         }
 
@@ -278,16 +278,18 @@ pub mod Primitive {
         fn draw(&mut self) {
             unsafe {
                 sceGuDisable(GuState::Texture2D);
-                // Reposition
                 sceGumMatrixMode(MatrixMode::Model);
+
+                sceGumPushMatrix();
+
                 sceGumLoadIdentity();
+
                 sceGumTranslate(&ScePspFVector3 {
                     x: self.position.x,
                     y: self.position.y,
                     z: -1.0,
                 });
 
-                sceKernelDcacheWritebackInvalidateAll();
                 sceGumDrawArray(
                     GuPrimitive::TriangleFan,
                     VertexType::TEXTURE_32BITF
@@ -298,6 +300,8 @@ pub mod Primitive {
                     ptr::null_mut(),
                     &self.vertices as *const Align16<_> as *const _,
                 );
+
+                sceGumPopMatrix();
             }
         }
 
