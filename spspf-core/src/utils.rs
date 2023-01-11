@@ -1,6 +1,7 @@
 extern crate alloc;
 use core::ops::Range;
 
+use alloc::{string::String, borrow::ToOwned};
 use psp::sys::{
     sceIoWrite, sceKernelStdout, sceKernelUtilsMt19937Init, sceKernelUtilsMt19937UInt,
     sceRtcGetCurrentClockLocalTime, SceKernelUtilsMt19937Context, ScePspDateTime,
@@ -24,7 +25,7 @@ pub fn stdout(message: &str) {
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 /// Returns a random `i32` inside the provided `Range<i32>` using the PSP's MT19937 and uniform distribuition.
-pub fn rnd_range(range: Range<i32>) -> i32 {
+pub fn rnd_range(range: Range<i32>) -> Result<i32, String> {
     let n_range = range.end.wrapping_sub(range.start).wrapping_add(1) as u32;
     let zone = (n_range << n_range.leading_zeros()).wrapping_sub(1);
 
@@ -34,13 +35,17 @@ pub fn rnd_range(range: Range<i32>) -> i32 {
         let current_time = core::mem::MaybeUninit::<ScePspDateTime>::uninit().as_mut_ptr();
 
         loop {
-            sceRtcGetCurrentClockLocalTime(current_time);
-            sceKernelUtilsMt19937Init(mt_context, (*current_time).microseconds);
+            if sceRtcGetCurrentClockLocalTime(current_time) < 0 {
+                return Err("Failed on sceRtcGetCurrentClockLocalTime.".to_owned());
+            }
+            if sceKernelUtilsMt19937Init(mt_context, (*current_time).microseconds) < 0 {
+                return Err("Failed on sceKernelUtilsMt19937Init.".to_owned());
+            }
             let v = sceKernelUtilsMt19937UInt(mt_context);
 
             let (_hi, lo) = v.widening_mul(n_range);
             if lo <= zone {
-                return range.start.wrapping_add(lo as i32);
+                return Ok(range.start.wrapping_add(lo as i32));
             }
         }
     }
