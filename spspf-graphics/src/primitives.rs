@@ -8,7 +8,7 @@ pub mod Primitive {
         sys::{
             sceGumDrawArray, sceGumLoadIdentity, sceGumMatrixMode, sceGumTranslate,
             sceKernelDcacheWritebackInvalidateAll, GuPrimitive, MatrixMode, ScePspFVector3,
-            VertexType, sceGuDisable, GuState, sceGumRotateZ, sceGumRotateX, sceGumRotateY, sceGumPushMatrix, sceGumPopMatrix,
+            VertexType, sceGuDisable, GuState, sceGumRotateZ, sceGumPushMatrix, sceGumPopMatrix,
         },
         Align16,
     };

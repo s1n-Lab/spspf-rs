@@ -1,7 +1,7 @@
 #![no_std]
 #![no_main]
 
-use psp::{Align16, math};
+use psp::Align16;
 use spspf_core::{
     input::{Buttons, InputManager},
     Vec2, Vec3,
@@ -16,7 +16,6 @@ pub static FERRIS: Align16<[u8; 128 * 128 * 4 as usize]> =
     Align16(*include_bytes!("../ferris.bin"));
 
 fn psp_main() {
-    let mut running = true;
     let mut canvas = Canvas::new();
     let mut input_manager = InputManager::new();
 
@@ -53,7 +52,7 @@ fn psp_main() {
     let mut draw_triangle = true;
     let mut draw_circle = true;
 
-    while running {
+    loop {
         canvas.start_frame();
         input_manager.update();
 
@@ -80,6 +79,8 @@ fn psp_main() {
         if input_manager.is_key_down_changed(Buttons::Circle) {
             draw_circle = !draw_circle;
         }
+
+        if input_manager.is_key_down_changed(Buttons::Cross) { break; }
 
         // Move sprite
         if input_manager.is_key_down(Buttons::Left) {
@@ -128,6 +129,7 @@ fn psp_main() {
         }
 
         /*running = input_manager.is_key_up(Buttons::RTrigger);*/
+
         if input_manager.is_key_down(Buttons::LTrigger) {
             let mut rot = rect.get_rot();
             if rot <= 1.0 { rot = 360.0; }
