@@ -44,6 +44,9 @@ pub trait Drawable {
     fn get_size(&mut self) -> Vec2<f32>;
     fn set_size(&mut self, new_size: Vec2<f32>);
 
+    fn get_scale(&mut self) -> Vec2<f32>;
+    fn set_scale(&mut self, new_scale: Vec2<f32>);
+
     fn get_pos(&mut self) -> Vec3<f32>;
     fn set_pos(&mut self, new_position: Vec3<f32>);
 

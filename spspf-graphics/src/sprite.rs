@@ -2,9 +2,9 @@ use psp::{
     sys::{
         sceGuEnable, sceGuTexFilter, sceGuTexFunc, sceGuTexImage, sceGuTexMode, sceGuTexOffset,
         sceGuTexScale, sceGuTexWrap, sceGumDrawArray, sceGumLoadIdentity, sceGumMatrixMode,
-        sceGumPopMatrix, sceGumPushMatrix, sceGumRotateZ, sceGumTranslate, GuPrimitive, GuState,
-        GuTexWrapMode, MatrixMode, MipmapLevel, ScePspFVector3, TextureColorComponent,
-        TextureEffect, TextureFilter, TexturePixelFormat, VertexType,
+        sceGumPopMatrix, sceGumPushMatrix, sceGumRotateZ, sceGumScale, sceGumTranslate,
+        GuPrimitive, GuState, GuTexWrapMode, MatrixMode, MipmapLevel, ScePspFVector3,
+        TextureColorComponent, TextureEffect, TextureFilter, TexturePixelFormat, VertexType,
     },
     Align16,
 };
@@ -18,6 +18,7 @@ pub struct Sprite<const N: usize> {
     position: Vec3<f32>,
     rotation: f32,
     size: Vec2<f32>,
+    scale: Vec2<f32>,
 
     texture: Align16<[u8; N]>,
     color: Color,
@@ -40,6 +41,7 @@ impl<const N: usize> Sprite<N> {
             position,
             rotation,
             size,
+            scale: Vec2::new(1.0, 1.0),
             texture_size,
             texture,
             color,
@@ -100,6 +102,11 @@ impl<const N: usize> Drawable for Sprite<N> {
                 z: self.position.z,
             });
             sceGumRotateZ(self.rotation);
+            sceGumScale(&ScePspFVector3 {
+                x: self.scale.x,
+                y: self.scale.y,
+                z: 1.0,
+            });
 
             sceGuTexMode(TexturePixelFormat::Psm8888, 0, 0, 0);
             sceGuTexImage(
@@ -140,6 +147,14 @@ impl<const N: usize> Drawable for Sprite<N> {
         let vertices = Self::generate_vertices(self.size, self.color);
 
         self.vertices = vertices;
+    }
+
+    fn get_scale(&mut self) -> Vec2<f32> {
+        self.scale
+    }
+
+    fn set_scale(&mut self, new_scale: Vec2<f32>) {
+        self.scale = new_scale;
     }
 
     fn get_pos(&mut self) -> Vec3<f32> {

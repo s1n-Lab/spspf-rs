@@ -83,31 +83,33 @@ fn psp_main() {
             break;
         }
 
-        // Move sprite
+        // Scale sprite
         if input_manager.is_key_down(Buttons::Left) {
-            let mut pos = sprite.get_pos();
-            if pos.x > 0.0 {
-                pos.x -= 1.0;
-                sprite.set_pos(pos);
+            let mut scale = sprite.get_scale();
+            if scale.x > 0.0 {
+                scale.x -= 0.05;
+                sprite.set_scale(scale);
             }
         }
         if input_manager.is_key_down(Buttons::Right) {
-            let mut pos = sprite.get_pos();
-            pos.x += 1.0;
-            sprite.set_pos(pos)
+            let mut scale = sprite.get_scale();
+            scale.x += 0.05;
+            sprite.set_scale(scale);
         }
         if input_manager.is_key_down(Buttons::Up) {
-            let mut pos = sprite.get_pos();
-            if pos.y > 0.0 {
-                pos.y -= 1.0;
-                sprite.set_pos(pos);
+            let mut scale = sprite.get_scale();
+            if scale.y > 0.0 {
+                scale.y -= 0.05;
+                sprite.set_scale(scale);
             }
         }
         if input_manager.is_key_down(Buttons::Down) {
-            let mut pos = sprite.get_pos();
-            pos.y += 1.0;
-            sprite.set_pos(pos)
+            let mut scale = sprite.get_scale();
+            scale.y += 0.05;
+            sprite.set_scale(scale);
         }
+
+        // Move sprite
         let analog = input_manager.get_analog_pos();
         let mut pos = sprite.get_pos();
         pos.x += analog.x as f32 * 1.0;

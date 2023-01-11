@@ -7,8 +7,8 @@ pub mod Primitive {
         math,
         sys::{
             sceGuDisable, sceGumDrawArray, sceGumLoadIdentity, sceGumMatrixMode, sceGumPopMatrix,
-            sceGumPushMatrix, sceGumRotateZ, sceGumTranslate, GuPrimitive, GuState, MatrixMode,
-            ScePspFVector3, VertexType,
+            sceGumPushMatrix, sceGumRotateZ, sceGumScale, sceGumTranslate, GuPrimitive, GuState,
+            MatrixMode, ScePspFVector3, VertexType,
         },
         Align16,
     };
@@ -24,6 +24,7 @@ pub mod Primitive {
 
         position: Vec3<f32>,
         size: Vec2<f32>,
+        scale: Vec2<f32>,
         rotation: f32,
 
         color: Color,
@@ -37,6 +38,7 @@ pub mod Primitive {
                 position,
                 rotation: 0.0,
                 size,
+                scale: Vec2::new(1.0, 1.0),
                 color,
             }
         }
@@ -95,6 +97,11 @@ pub mod Primitive {
                     z: -1.0,
                 });
                 sceGumRotateZ(self.rotation);
+                sceGumScale(&ScePspFVector3 {
+                    x: self.scale.x,
+                    y: self.scale.y,
+                    z: 1.0,
+                });
 
                 sceGumDrawArray(
                     GuPrimitive::Triangles,
@@ -121,6 +128,14 @@ pub mod Primitive {
             self.vertices = Self::generate_vertices(self.size, self.color.clone());
         }
 
+        fn get_scale(&mut self) -> Vec2<f32> {
+            self.scale
+        }
+
+        fn set_scale(&mut self, new_scale: Vec2<f32>) {
+            self.scale = new_scale;
+        }
+
         fn get_pos(&mut self) -> Vec3<f32> {
             self.position
         }
@@ -141,7 +156,9 @@ pub mod Primitive {
     #[derive(Clone)]
     pub struct Triangle {
         vertices: Align16<[Vertex; 3]>,
+
         position: Vec3<f32>,
+        scale: Vec2<f32>,
 
         color: Color,
     }
@@ -151,6 +168,7 @@ pub mod Primitive {
             Self {
                 vertices: Self::generate_vertices(vertices, color),
                 position: Vec3::new(vertices[1].x, vertices[1].y, vertices[1].z),
+                scale: Vec2::new(1.0, 1.0),
                 color,
             }
         }
@@ -201,11 +219,11 @@ pub mod Primitive {
 
                 sceGumLoadIdentity();
 
-                /*sceGumTranslate(&ScePspFVector3 {
-                    x: self.position.x,
-                    y: self.position.y,
-                    z: -1.0,
-                });*/
+                sceGumScale(&ScePspFVector3 {
+                    x: self.scale.x,
+                    y: self.scale.y,
+                    z: 1.0,
+                });
 
                 sceGumDrawArray(
                     GuPrimitive::Triangles,
@@ -230,6 +248,14 @@ pub mod Primitive {
             todo!()
         }
 
+        fn get_scale(&mut self) -> Vec2<f32> {
+            self.scale
+        }
+
+        fn set_scale(&mut self, new_scale: Vec2<f32>) {
+            self.scale = new_scale;
+        }
+
         fn get_pos(&mut self) -> Vec3<f32> {
             self.position
         }
@@ -250,8 +276,10 @@ pub mod Primitive {
     #[derive(Clone)]
     pub struct Ellipse {
         vertices: Align16<[Vertex; (STEPS + 1) as usize]>,
+
         position: Vec3<f32>,
         radius: Vec2<f32>,
+        scale: Vec2<f32>,
 
         color: Color,
     }
@@ -275,6 +303,7 @@ pub mod Primitive {
             Self {
                 vertices: Align16(sort_vertices(vertices.0, true)),
                 radius,
+                scale: Vec2::new(1.0, 1.0),
                 position: Vec3::new(center.x, center.y, center.z),
                 color,
             }
@@ -295,6 +324,11 @@ pub mod Primitive {
                     x: self.position.x,
                     y: self.position.y,
                     z: -1.0,
+                });
+                sceGumScale(&ScePspFVector3 {
+                    x: self.scale.x,
+                    y: self.scale.y,
+                    z: 1.0,
                 });
 
                 sceGumDrawArray(
@@ -318,6 +352,14 @@ pub mod Primitive {
 
         fn set_size(&mut self, new_size: Vec2<f32>) {
             self.radius = new_size;
+        }
+
+        fn get_scale(&mut self) -> Vec2<f32> {
+            self.scale
+        }
+
+        fn set_scale(&mut self, new_scale: Vec2<f32>) {
+            self.scale = new_scale;
         }
 
         fn get_pos(&mut self) -> Vec3<f32> {
