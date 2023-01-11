@@ -20,6 +20,7 @@ pub(crate) const PI: f32 = 3.1415926536;
 #[allow(dead_code)]
 /// This modules describes and gives access to the PSP screen (width: `480`, height: `272`).
 pub mod canvas;
+mod utils;
 pub use crate::canvas::Canvas;
 #[allow(dead_code)]
 /// This module defines some preset colors for ease of use and allows the user to manually input a color (`R,G,B,A`).
@@ -52,7 +53,7 @@ pub trait Drawable {
 
 /// Defines a vertex used by the drawable functions.
 #[repr(C, align(4))]
-#[derive(Default, Clone, Copy)]
+#[derive(Default, Clone, Copy, Debug)]
 pub struct Vertex {
     u: f32,
     v: f32,

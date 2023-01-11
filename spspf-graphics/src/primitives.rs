@@ -1,6 +1,6 @@
 #[allow(non_snake_case)]
 pub mod Primitive {
-    use crate::{Color, Drawable, Vertex, PI};
+    use crate::{utils::sort_vertices, Color, Drawable, Vertex, PI};
     use core::ptr;
     extern crate alloc;
     use psp::{
@@ -148,39 +148,46 @@ pub mod Primitive {
 
     impl Triangle {
         pub fn new(vertices: [Vec3<f32>; 3], color: Color) -> Self {
-            //TODO: Normalize vertices to keep clockwise order
-            let n_vertices: Align16<[Vertex; 3]> = Align16([
-                Vertex {
-                    u: 0.0,
-                    v: 0.0,
-                    color: color.as_abgr(),
-                    x: vertices[0].x,
-                    y: vertices[0].y,
-                    z: -1.0,
-                },
-                Vertex {
-                    u: 0.0,
-                    v: 0.0,
-                    color: color.as_abgr(),
-                    x: vertices[1].x,
-                    y: vertices[1].y,
-                    z: -1.0,
-                },
-                Vertex {
-                    u: 0.0,
-                    v: 0.0,
-                    color: color.as_abgr(),
-                    x: vertices[2].x,
-                    y: vertices[2].y,
-                    z: -1.0,
-                },
-            ]);
-
             Self {
-                vertices: n_vertices,
+                vertices: Self::generate_vertices(vertices, color),
                 position: Vec3::new(vertices[1].x, vertices[1].y, vertices[1].z),
                 color,
             }
+        }
+
+        pub(crate) fn generate_vertices(
+            vertex_pos: [Vec3<f32>; 3],
+            color: Color,
+        ) -> Align16<[Vertex; 3]> {
+            Align16(sort_vertices(
+                [
+                    Vertex {
+                        u: 0.0,
+                        v: 0.0,
+                        color: color.as_abgr(),
+                        x: vertex_pos[0].x,
+                        y: vertex_pos[0].y,
+                        z: -1.0,
+                    },
+                    Vertex {
+                        u: 0.0,
+                        v: 0.0,
+                        color: color.as_abgr(),
+                        x: vertex_pos[1].x,
+                        y: vertex_pos[1].y,
+                        z: -1.0,
+                    },
+                    Vertex {
+                        u: 0.0,
+                        v: 0.0,
+                        color: color.as_abgr(),
+                        x: vertex_pos[2].x,
+                        y: vertex_pos[2].y,
+                        z: -1.0,
+                    },
+                ],
+                true,
+            ))
         }
     }
 
@@ -194,11 +201,11 @@ pub mod Primitive {
 
                 sceGumLoadIdentity();
 
-                sceGumTranslate(&ScePspFVector3 {
+                /*sceGumTranslate(&ScePspFVector3 {
                     x: self.position.x,
                     y: self.position.y,
                     z: -1.0,
-                });
+                });*/
 
                 sceGumDrawArray(
                     GuPrimitive::Triangles,
@@ -266,7 +273,7 @@ pub mod Primitive {
             }
 
             Self {
-                vertices,
+                vertices: Align16(sort_vertices(vertices.0, true)),
                 radius,
                 position: Vec3::new(center.x, center.y, center.z),
                 color,

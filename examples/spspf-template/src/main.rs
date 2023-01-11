@@ -1,14 +1,13 @@
 #![no_std]
 #![no_main]
 
+extern crate alloc;
 use psp::Align16;
 use spspf_core::{
     input::{Buttons, InputManager},
     Vec2, Vec3,
 };
-use spspf_graphics::{
-    Canvas, Colors, Primitive, Sprite, Drawable,
-};
+use spspf_graphics::{Canvas, Colors, Drawable, Primitive, Sprite};
 
 psp::module!("SPSPF - Demo", 1, 1);
 
@@ -80,7 +79,9 @@ fn psp_main() {
             draw_circle = !draw_circle;
         }
 
-        if input_manager.is_key_down_changed(Buttons::Cross) { break; }
+        if input_manager.is_key_down_changed(Buttons::Cross) {
+            break;
+        }
 
         // Move sprite
         if input_manager.is_key_down(Buttons::Left) {
@@ -119,7 +120,7 @@ fn psp_main() {
                 size.x -= 1.0;
                 size.y -= 1.0;
                 sprite.set_size(size)
-            }            
+            }
         }
         if input_manager.is_key_down(Buttons::Start) {
             let mut size = sprite.get_size();
@@ -130,14 +131,18 @@ fn psp_main() {
 
         if input_manager.is_key_down(Buttons::LTrigger) {
             let mut rot = sprite.get_rot();
-            if rot <= 1.0 { rot = 360.0; }
+            if rot <= 1.0 {
+                rot = 360.0;
+            }
             rot -= 2.0;
             sprite.set_rot(rot);
         }
 
         if input_manager.is_key_down(Buttons::RTrigger) {
             let mut rot = sprite.get_rot();
-            if rot >= 359.0 { rot = 0.0; }
+            if rot >= 359.0 {
+                rot = 0.0;
+            }
             rot += 2.0;
             sprite.set_rot(rot);
         }

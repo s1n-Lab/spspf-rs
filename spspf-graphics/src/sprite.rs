@@ -37,12 +37,12 @@ impl<const N: usize> Sprite<N> {
         Self {
             vertices: Self::generate_vertices(size, color),
             indices: Align16([0, 1, 2, 2, 1, 3]),
-            position: position,
+            position,
             rotation,
-            size: size,
+            size,
             texture_size,
-            texture: texture,
-            color: color,
+            texture,
+            color,
         }
     }
 

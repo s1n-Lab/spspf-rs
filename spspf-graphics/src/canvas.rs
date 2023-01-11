@@ -4,12 +4,12 @@ use psp::{
     sys::{
         sceDisplayWaitVblankStart, sceGuAlphaFunc, sceGuBlendFunc, sceGuClear, sceGuClearColor,
         sceGuClearDepth, sceGuDebugFlush, sceGuDebugPrint, sceGuDepthBuffer, sceGuDepthRange,
-        sceGuDispBuffer, sceGuDisplay, sceGuDrawBuffer, sceGuEnable, sceGuFinish, sceGuInit,
-        sceGuOffset, sceGuScissor, sceGuShadeModel, sceGuStart, sceGuSwapBuffers, sceGuSync,
-        sceGuTerm, sceGuViewport, sceGumLoadIdentity, sceGumMatrixMode, sceGumOrtho,
+        sceGuDispBuffer, sceGuDisplay, sceGuDrawBuffer, sceGuEnable, sceGuFinish, sceGuFrontFace,
+        sceGuInit, sceGuOffset, sceGuScissor, sceGuShadeModel, sceGuStart, sceGuSwapBuffers,
+        sceGuSync, sceGuTerm, sceGuViewport, sceGumLoadIdentity, sceGumMatrixMode, sceGumOrtho,
         sceKernelDcacheWritebackInvalidateAll, sceKernelExitGame, AlphaFunc, BlendFactor, BlendOp,
-        ClearBuffer, DisplayPixelFormat, GuContextType, GuState, GuSyncBehavior, GuSyncMode,
-        MatrixMode, ShadingModel, TexturePixelFormat,
+        ClearBuffer, DisplayPixelFormat, FrontFaceDirection, GuContextType, GuState,
+        GuSyncBehavior, GuSyncMode, MatrixMode, ShadingModel, TexturePixelFormat,
     },
     vram_alloc::get_vram_allocator,
     BUF_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH,
@@ -71,6 +71,9 @@ impl Canvas {
             sceGuAlphaFunc(AlphaFunc::Greater, 0, 0xff);
             sceGuEnable(GuState::AlphaTest);
             sceGuShadeModel(ShadingModel::Smooth);
+
+            sceGuEnable(GuState::CullFace);
+            sceGuFrontFace(FrontFaceDirection::Clockwise);
 
             sceGuFinish();
             sceGuSync(GuSyncMode::Finish, GuSyncBehavior::Wait);
