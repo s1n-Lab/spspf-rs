@@ -15,18 +15,21 @@
 #![no_std]
 #![no_main]
 
+pub(crate) const PI: f32 = 3.1415926536;
+
 #[allow(dead_code)]
 /// This modules describes and gives access to the PSP screen (width: `480`, height: `272`).
 pub mod canvas;
+mod utils;
 pub use crate::canvas::Canvas;
 #[allow(dead_code)]
 /// This module defines some preset colors for ease of use and allows the user to manually input a color (`R,G,B,A`).
 pub mod colors;
 pub use crate::colors::{Color, Colors};
 #[allow(dead_code)]
-/// This module defines the basic shapes (Rect, Triangle, Circle) to allow it to be drawn easily.
-pub mod shapes;
-pub use crate::shapes::Shape;
+/// This module defines basic primitives (Rect, Triangle, Ellipse) to allow it to be drawn easily.
+pub mod primitives;
+pub use crate::primitives::Primitive;
 #[allow(dead_code)]
 /// This module defines a 2D sprite that, based on a 16-bit aligned image with matching W and H.
 pub mod sprite;
@@ -41,6 +44,9 @@ pub trait Drawable {
     fn get_size(&mut self) -> Vec2<f32>;
     fn set_size(&mut self, new_size: Vec2<f32>);
 
+    fn get_scale(&mut self) -> Vec2<f32>;
+    fn set_scale(&mut self, new_scale: Vec2<f32>);
+
     fn get_pos(&mut self) -> Vec3<f32>;
     fn set_pos(&mut self, new_position: Vec3<f32>);
 
@@ -50,7 +56,7 @@ pub trait Drawable {
 
 /// Defines a vertex used by the drawable functions.
 #[repr(C, align(4))]
-#[derive(Default, Clone, Copy)]
+#[derive(Default, Clone, Copy, Debug)]
 pub struct Vertex {
     u: f32,
     v: f32,

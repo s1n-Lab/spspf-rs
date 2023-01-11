@@ -27,7 +27,7 @@ pub use crate::input::InputManager;
 pub mod utils;
 
 /// Vector 3 (x, y and z coordinates)
-#[derive(Clone, Default, Copy)]
+#[derive(Clone, Default, Copy, Debug)]
 pub struct Vec3<T> {
     pub x: T,
     pub y: T,
@@ -41,7 +41,7 @@ impl<T> Vec3<T> {
 }
 
 /// Vector 2 (x and y coordinates)
-#[derive(Clone, Default, Copy)]
+#[derive(Clone, Default, Copy, Debug)]
 pub struct Vec2<T> {
     pub x: T,
     pub y: T,
