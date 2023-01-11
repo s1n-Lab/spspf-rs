@@ -158,6 +158,7 @@ pub mod Primitive {
         vertices: Align16<[Vertex; 3]>,
 
         position: Vec3<f32>,
+        rotation: f32,
         scale: Vec2<f32>,
 
         color: Color,
@@ -168,6 +169,7 @@ pub mod Primitive {
             Self {
                 vertices: Self::generate_vertices(vertices, color),
                 position: Vec3::new(vertices[1].x, vertices[1].y, vertices[1].z),
+                rotation: 0.0,
                 scale: Vec2::new(1.0, 1.0),
                 color,
             }
@@ -219,6 +221,7 @@ pub mod Primitive {
 
                 sceGumLoadIdentity();
 
+                sceGumRotateZ(self.rotation);
                 sceGumScale(&ScePspFVector3 {
                     x: self.scale.x,
                     y: self.scale.y,
@@ -265,11 +268,11 @@ pub mod Primitive {
         }
 
         fn get_rot(&mut self) -> f32 {
-            todo!()
+            self.rotation * (180.0 / PI)
         }
 
-        fn set_rot(&mut self, _new_rotation: f32) {
-            todo!()
+        fn set_rot(&mut self, new_rotation: f32) {
+            self.rotation = new_rotation * (PI / 180.0);
         }
     }
 
@@ -278,6 +281,7 @@ pub mod Primitive {
         vertices: Align16<[Vertex; (STEPS + 1) as usize]>,
 
         position: Vec3<f32>,
+        rotation: f32,
         radius: Vec2<f32>,
         scale: Vec2<f32>,
 
@@ -305,6 +309,7 @@ pub mod Primitive {
                 radius,
                 scale: Vec2::new(1.0, 1.0),
                 position: Vec3::new(center.x, center.y, center.z),
+                rotation: 0.0,
                 color,
             }
         }
@@ -325,6 +330,7 @@ pub mod Primitive {
                     y: self.position.y,
                     z: -1.0,
                 });
+                sceGumRotateZ(self.rotation);
                 sceGumScale(&ScePspFVector3 {
                     x: self.scale.x,
                     y: self.scale.y,
@@ -371,11 +377,11 @@ pub mod Primitive {
         }
 
         fn get_rot(&mut self) -> f32 {
-            todo!()
+            self.rotation * (180.0 / PI)
         }
 
-        fn set_rot(&mut self, _new_rotation: f32) {
-            todo!()
+        fn set_rot(&mut self, new_rotation: f32) {
+            self.rotation = new_rotation * (PI / 180.0);
         }
     }
 }

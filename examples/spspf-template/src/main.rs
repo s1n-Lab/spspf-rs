@@ -33,7 +33,7 @@ fn psp_main() {
         Colors::RED.as_color(),
     );
 
-    let mut circle = Primitive::Ellipse::new(
+    let mut ellipse = Primitive::Ellipse::new(
         Vec3::new(240.0, 136.0, -1.0),
         Vec2::new(75.0, 50.0),
         Colors::WHITE.as_color(),
@@ -49,7 +49,7 @@ fn psp_main() {
 
     let mut draw_rect = true;
     let mut draw_triangle = true;
-    let mut draw_circle = true;
+    let mut draw_ellipse = true;
 
     loop {
         canvas.start_frame();
@@ -63,8 +63,8 @@ fn psp_main() {
         if draw_rect {
             rect.draw();
         }
-        if draw_circle {
-            circle.draw();
+        if draw_ellipse {
+            ellipse.draw();
         }
 
         sprite.draw();
@@ -76,7 +76,7 @@ fn psp_main() {
             draw_triangle = !draw_triangle;
         }
         if input_manager.is_key_down_changed(Buttons::Circle) {
-            draw_circle = !draw_circle;
+            draw_ellipse = !draw_ellipse;
         }
 
         if input_manager.is_key_down_changed(Buttons::Cross) {
@@ -131,6 +131,7 @@ fn psp_main() {
             sprite.set_size(size)
         }
 
+        // Rotates sprite
         if input_manager.is_key_down(Buttons::LTrigger) {
             let mut rot = sprite.get_rot();
             if rot <= 1.0 {
@@ -139,7 +140,6 @@ fn psp_main() {
             rot -= 2.0;
             sprite.set_rot(rot);
         }
-
         if input_manager.is_key_down(Buttons::RTrigger) {
             let mut rot = sprite.get_rot();
             if rot >= 359.0 {
