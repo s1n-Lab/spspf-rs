@@ -31,7 +31,7 @@ pub use crate::colors::{Color, Colors};
 pub mod primitives;
 pub use crate::primitives::Primitive;
 #[allow(dead_code)]
-/// This module defines a 2D sprite that, based on a 16-bit aligned image with matching W and H.
+/// This module defines a 2D sprite, based on a 16-bit aligned image with matching W and H.
 pub mod sprite;
 pub use crate::sprite::Sprite;
 
