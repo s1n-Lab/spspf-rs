@@ -3,6 +3,7 @@ pub mod Primitive {
     use crate::{utils::sort_vertices, Color, Drawable, Vertex, PI};
     use core::ptr;
     extern crate alloc;
+    use alloc::vec::Vec;
     use psp::{
         math,
         sys::{
@@ -244,11 +245,82 @@ pub mod Primitive {
         }
 
         fn get_size(&mut self) -> Vec2<f32> {
-            todo!()
+            // Gets smallest and largest X
+            let mut min_x = f32::MAX;
+            let mut max_x = f32::MIN;
+            for i in 0..self.vertices.0.len() {
+                if self.vertices.0[i].x < min_x {
+                    min_x = self.vertices.0[i].x
+                }
+                if self.vertices.0[i].x > max_x {
+                    max_x = self.vertices.0[i].x
+                }
+            }
+
+            // Gets smallest and largest Y
+            let mut min_y = f32::MAX;
+            let mut max_y = f32::MIN;
+            for i in 0..self.vertices.0.len() {
+                if self.vertices.0[i].y < min_y {
+                    min_y = self.vertices.0[i].y
+                }
+                if self.vertices.0[i].y > max_y {
+                    max_y = self.vertices.0[i].y
+                }
+            }
+
+            // Returns difference between largest and smallest coordinates in each axis
+            Vec2::new(max_x - min_x, max_y - min_y)
         }
 
-        fn set_size(&mut self, _new_size: Vec2<f32>) {
-            todo!()
+        fn set_size(&mut self, new_size: Vec2<f32>) {
+            let old_size = self.get_size();
+            let difference = Vec2::new(new_size.x - old_size.x, new_size.y - old_size.y);
+
+            // Gets smallest and largest X vertex
+            let mut min_x = f32::MAX;
+            let mut min_x_id: Vec<usize> = Vec::new();
+            for i in 0..self.vertices.0.len() {
+                if self.vertices.0[i].x < min_x {
+                    min_x = self.vertices.0[i].x;
+                    min_x_id = alloc::vec![i];
+                }
+                if self.vertices.0[i].x == min_x {
+                    min_x_id.push(i)
+                }
+            }
+
+            // Gets smallest and largest Y vertex
+            let mut min_y = f32::MAX;
+            let mut min_y_id: Vec<usize> = Vec::new();
+            for i in 0..self.vertices.0.len() {
+                if self.vertices.0[i].y < min_y {
+                    min_y = self.vertices.0[i].y;
+                    min_y_id = alloc::vec![i];
+                }
+                if self.vertices.0[i].x == min_x {
+                    min_x_id.push(i)
+                }
+            }
+
+            // Moves all axis except the smallest ones on each axis by the difference
+            let mut vertices = self.vertices;
+            for i in 0..vertices.0.len() {
+                if !min_x_id.contains(&i) {
+                    vertices.0[i].x += difference.x
+                }
+                if !min_y_id.contains(&i) {
+                    vertices.0[i].y += difference.y
+                }
+            }
+            self.vertices = Self::generate_vertices(
+                [
+                    Vec3::new(vertices.0[0].x, vertices.0[0].y, -vertices.0[0].z),
+                    Vec3::new(vertices.0[1].x, vertices.0[1].y, -vertices.0[1].z),
+                    Vec3::new(vertices.0[2].x, vertices.0[2].y, -vertices.0[2].z),
+                ],
+                self.color,
+            );
         }
 
         fn get_scale(&mut self) -> Vec2<f32> {
