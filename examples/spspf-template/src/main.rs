@@ -3,11 +3,13 @@
 
 extern crate alloc;
 use psp::Align16;
-use spspf_core::{
-    input::{Buttons, InputManager},
-    Vec2, Vec3,
+use spspf::{
+    core::{
+        input::{Buttons, InputManager},
+        Vec2, Vec3,
+    },
+    graphics::{Canvas, Colors, Drawable, Primitive, Sprite},
 };
-use spspf_graphics::{Canvas, Colors, Drawable, Primitive, Sprite};
 
 psp::module!("SPSPF - Demo", 1, 1);
 

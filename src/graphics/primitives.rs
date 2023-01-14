@@ -1,8 +1,9 @@
 #[allow(non_snake_case)]
 pub mod Primitive {
-    use crate::{utils::sort_vertices, Color, Drawable, Vertex, PI};
+    use crate::graphics::{utils::sort_vertices, Color, Drawable, Vertex, PI};
     use core::ptr;
     extern crate alloc;
+    use crate::core::{Vec2, Vec3};
     use alloc::vec::Vec;
     use psp::{
         math,
@@ -13,7 +14,6 @@ pub mod Primitive {
         },
         Align16,
     };
-    use spspf_core::{Vec2, Vec3};
 
     const STEPS: i32 = 100;
     const ANGLE: f32 = PI * 2.0 / STEPS as f32;

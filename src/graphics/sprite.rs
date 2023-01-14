@@ -8,9 +8,9 @@ use psp::{
     },
     Align16,
 };
-use spspf_core::{Vec2, Vec3};
 
-use crate::{colors::Color, Drawable, Vertex, PI};
+use crate::core::{Vec2, Vec3};
+use crate::graphics::{colors::Color, Drawable, Vertex, PI};
 
 pub struct Sprite<const N: usize> {
     vertices: Align16<[Vertex; 4]>,

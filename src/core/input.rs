@@ -3,7 +3,7 @@ use psp::sys::{
     CtrlMode, SceCtrlData,
 };
 
-use crate::Vec2;
+use crate::core::Vec2;
 
 /// Reference to all available buttons in the PSP, to be used with `InputManager`
 #[derive(Clone)]
@@ -121,6 +121,7 @@ impl InputManager {
         Vec2::new(x, y)
     }
 }
+
 
 // Analog management by Glenn Hope's and Paul Sajna's implementation on [psp-paint-mode](https://github.com/overdrivenpotato/rust-psp/commit/ba16f08d16b39dcdefd022c9fb738d40545d6cc3)
 const DEADZONE: i32 = 10;

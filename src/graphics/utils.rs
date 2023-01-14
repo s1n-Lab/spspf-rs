@@ -1,4 +1,4 @@
-use crate::Vertex;
+use crate::graphics::Vertex;
 
 pub(crate) fn sort_vertices<const N: usize>(vertices: [Vertex; N], clockwise: bool) -> [Vertex; N] {
     let mut vertices_sorted = vertices;
