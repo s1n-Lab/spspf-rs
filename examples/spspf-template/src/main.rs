@@ -19,6 +19,22 @@ pub static FERRIS: Align16<[u8; 128 * 128 * 4 as usize]> =
 fn psp_main() {
     let mut canvas = Canvas::new();
     let mut input_manager = InputManager::new();
+    let mut file_manager = match FileManager::new("SPSPF-Template") {
+        Ok(r) => r,
+        Err(e) => {
+            spspf_core::utils::stdout(alloc::format!("ERROR: {}", e).as_str());
+            panic!();
+        }
+    };
+
+    match file_manager.read_file("ferris.bin") {
+        Ok(r) => {
+            spspf_core::utils::stdout(alloc::format!("SUCCESS: Content - {:x?}", r).as_str())
+        }
+        Err(e) => {
+            spspf_core::utils::stdout(alloc::format!("ERROR: {}", e).as_str());
+        }
+    };
 
     let mut rect = Primitive::Rect::new(
         Vec3::new(240.0, 136.0, -1.0),
