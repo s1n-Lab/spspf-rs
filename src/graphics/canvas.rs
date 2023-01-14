@@ -15,7 +15,7 @@ use psp::{
     BUF_WIDTH, SCREEN_HEIGHT, SCREEN_WIDTH,
 };
 
-use crate::colors::{Color, Colors};
+use crate::graphics::colors::{Color, Colors};
 
 static mut LIST: psp::Align16<[u32; 0x40000]> = psp::Align16([0; 0x40000]);
 

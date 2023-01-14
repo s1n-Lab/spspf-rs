@@ -48,9 +48,7 @@ $ cargo install cargo-psp
 # Cargo.toml
 [dependencies]
 psp = "0.3.2"
-spspf-core = "0.1.0"
-spspf-graphics = "0.1.0"
-spspf-audio = "0.1.0"
+spspf = "0.1.0"
 ```
 
 Check the [SPSPF-Template](https://github.com/originals1n/spspf-rs/examples/spspf-template) for a basic setup utilizing most features available in SPSPF.

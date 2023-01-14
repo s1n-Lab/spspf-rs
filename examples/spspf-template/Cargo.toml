@@ -5,8 +5,7 @@ edition = "2021"
 
 [dependencies]
 psp = { path = "../../rust-psp/psp" }
-spspf-core = { path = "../../spspf-core" }
-spspf-graphics = { path = "../../spspf-graphics" }
+spspf = { path = "../../", features = ["graphics"] }
 
 [profile.release]
 debug = true

@@ -1,4 +1,10 @@
-[workspace]
+[package]
+name = "spspf"
+version = "0.1.0"
+edition = "2021"
 
-members = [ "spspf-core", "spspf-graphics" ]
-exclude = [ "examples" ]
+[dependencies]
+psp = { path = "rust-psp/psp" }
+
+[features]
+graphics = []

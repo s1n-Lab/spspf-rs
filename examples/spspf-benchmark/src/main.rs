@@ -4,9 +4,13 @@
 extern crate alloc;
 use alloc::vec::Vec;
 
-use spspf_core::{input::{InputManager, Buttons}, Vec2, Vec3};
-use spspf_graphics::{Drawable, canvas::Canvas, Primitive, colors::Colors};
-
+use spspf::{
+    core::{
+        input::{Buttons, InputManager},
+        Vec2, Vec3,
+    },
+    graphics::{canvas::Canvas, colors::Colors, Drawable, Primitive},
+};
 
 psp::module!("SPSPF - Demo", 1, 1);
 
@@ -25,9 +29,13 @@ fn psp_main() {
 
         for rect_id in 0..rects.len() {
             let mut pos = rects[rect_id].0.get_pos();
-            let mut size = rects[rect_id].0.get_size();
-            if pos.x + size.x > 480.0 || pos.x < 0.0 { rects[rect_id].1.x *= -1.0  }
-            if pos.y + size.y > 272.0 || pos.y < 0.0 { rects[rect_id].1.y *= -1.0  }
+            let size = rects[rect_id].0.get_size();
+            if pos.x + size.x > 480.0 || pos.x < 0.0 {
+                rects[rect_id].1.x *= -1.0
+            }
+            if pos.y + size.y > 272.0 || pos.y < 0.0 {
+                rects[rect_id].1.y *= -1.0
+            }
             pos.x += rects[rect_id].1.x;
             pos.y += rects[rect_id].1.y;
             rects[rect_id].0.set_pos(pos);

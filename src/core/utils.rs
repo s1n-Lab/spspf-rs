@@ -1,7 +1,7 @@
 extern crate alloc;
 use core::ops::Range;
 
-use alloc::{string::String, borrow::ToOwned};
+use alloc::{borrow::ToOwned, string::String};
 use psp::sys::{
     sceIoWrite, sceKernelStdout, sceKernelUtilsMt19937Init, sceKernelUtilsMt19937UInt,
     sceRtcGetCurrentClockLocalTime, SceKernelUtilsMt19937Context, ScePspDateTime,
