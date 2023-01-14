@@ -7,8 +7,10 @@ use spspf::{
     core::{
         input::{Buttons, InputManager},
         Vec2, Vec3,
+        utils::stdout,
     },
     graphics::{Canvas, Colors, Drawable, Primitive, Sprite},
+    audio::audiomanager::{AudioManager, Sound},
 };
 
 psp::module!("SPSPF - Demo", 1, 1);
@@ -16,9 +18,19 @@ psp::module!("SPSPF - Demo", 1, 1);
 pub static FERRIS: Align16<[u8; 128 * 128 * 4 as usize]> =
     Align16(*include_bytes!("../ferris.bin"));
 
+pub static CLICK: [u8; 16596] = *include_bytes!("../click.wav");
+
 fn psp_main() {
     let mut canvas = Canvas::new();
     let mut input_manager = InputManager::new();
+    let mut audio_manager = match AudioManager::init() {
+        Ok(r) => r,
+        Err(e) => {
+            stdout(e.as_str());
+            canvas.terminate();
+            return;
+        }
+    };
 
     let mut rect = Primitive::Rect::new(
         Vec3::new(240.0, 136.0, -1.0),
@@ -53,6 +65,8 @@ fn psp_main() {
     let mut draw_triangle = true;
     let mut draw_ellipse = true;
 
+    let mut click = Sound::new(&CLICK);
+
     loop {
         canvas.start_frame();
         input_manager.update();
@@ -79,10 +93,6 @@ fn psp_main() {
         }
         if input_manager.is_key_down_changed(Buttons::Circle) {
             draw_ellipse = !draw_ellipse;
-        }
-
-        if input_manager.is_key_down_changed(Buttons::Cross) {
-            break;
         }
 
         // Scale sprite
@@ -149,6 +159,21 @@ fn psp_main() {
             }
             rot += 2.0;
             sprite.set_rot(rot);
+        }
+
+        // Plays click sound
+        if input_manager.is_key_down_changed(Buttons::Cross) {
+            match click.play(&mut audio_manager) {
+                Ok(r) => {
+                    stdout(
+                        alloc::format!("\n[MAINT] OK: Attempting to play audio on channel {}", r)
+                            .as_str(),
+                    );
+                }
+                Err(e) => {
+                    stdout(e.as_str());
+                }
+            };
         }
 
         canvas.end_frame();

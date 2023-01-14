@@ -16,3 +16,5 @@
 pub mod core;
 #[cfg(feature = "graphics")]
 pub mod graphics;
+#[cfg(feature = "audio")]
+pub mod audio;
